@@ -2,165 +2,180 @@
 <html>
 
 <head>
-    <title>DHT Data Sensor</title>
-    <link rel="stylesheet" href='../static/style.css'/>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<script src='static/Chart.min.js'></script>
-    <style>
-		body {
-			text-align: center;
-		}
+  <title>Tooltip Interaction Modes</title>
+  <link rel="stylesheet" href='../static/style.css' />
+  <script src='static/Chart.min.js'></script>
+  <script src="../static/raphael-2.1.4.min.js"></script>
+  <script src="../static/justgage.js"></script>
 
-		#g1,
-		#g2 {
-			width: 200px;
-			height: 160px;
-			display: inline-block;
-			margin: 1em;
-		}
+  <style>
+    body {
+      text-align: center;
+    }
 
-    </style>
+    #g1,
+    #g2 {
+      width: 200px;
+      height: 160px;
+      display: inline-block;
+      margin: 1em;
+    }
+
+    canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .chart-container {
+      width: 700px;
+      margin-left: 40px;
+      margin-right: 40px;
+      margin-bottom: 40px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
 </head>
 
 <body>
-	<h1>DHT Sensor Data </h1>
-    <div id="g1"></div>
-    <div id="g2"></div>    
-	<h3> Last Sensors Reading: {{ time }} ==> <a href="/"class="button">REFRESH</a></h3>	
-	<h3> HISTORICAL DATA </h3>
-		<!-- <p> Enter number of samples to retrieve: -->
-		<!-- <form method="POST">
-			<input name="numSamples" value= {{numSamples}}>
-			<input type="submit">
-		</form></p>
-		<hr> -->
-		<!-- <img src="/chart_temp" alt="Image Placeholder" width="49%"> -->
-		<!-- <img src="/chart_hum" alt="Image Placeholder" width="49%"> -->
-	
-		<!-- <canvas id="myTempChart" width="49%" ></canvas> -->
-		<canvas id="myTempChart" width="600" height="400"></canvas>
-		<canvas id="myHumChart" width="600" height="400"></canvas>
-    <p id="caption">The chart is displaying a simple line chart.</p>
+  <h1>DHT Sensor Data </h1>
+  <div id="g1"></div>
+  <div id="g2"></div>
+  <h3> Last Sensors Reading: {{ time }} ==> <a href="/" class="button">REFRESH</a></h3>
+  <h3> HISTORICAL DATA </h3>
 
-	<p> @2018 Developed by MamaSaurio.org</p>
-    
-    <script src="../static/raphael-2.1.4.min.js"></script>
-    <script src="../static/justgage.js"></script>
-    <script>
-		var g1, g2;
-		document.addEventListener("DOMContentLoaded", function(event) {
-			g1 = new JustGage({
-				id: "g1",
-				value: {{temp}},
-				valueFontColor: "blue",
-				titleFontColor: "blue",
-				// gaugeColor: "rgba(75,192,192,1)",
-				levelColors: ["#190bd7", "#23d70b", "#ff0000"],
-				min: 0,
-				max: 50,
-				title: "Temperature",
-				label: "Celcius"
+  <script>
+    var g1, g2;
+    document.addEventListener("DOMContentLoaded", function (event) {
+      g1 = new JustGage({
+        id: "g1",
+        value: {{ temp }},
+      valueFontColor: "blue",
+      titleFontColor: "blue",
+      levelColors: ["#190bd7", "#23d70b", "#ff0000"],
+      min: 0,
+      max: 50,
+      title: "Temperature",
+      label: "Celcius"
 			});
 
-			g2 = new JustGage({
-				id: "g2",
-				value: {{hum}},
-				valueFontColor: "blue",
-				titleFontColor: "blue",
-				min: 0,
-				max: 100,
-				title: "Humidity",
-				label: "%"
+    g2 = new JustGage({
+      id: "g2",
+      value: {{ hum }},
+      valueFontColor: "blue",
+      titleFontColor: "blue",
+      min: 0,
+      max: 100,
+      title: "Humidity",
+      label: "%"
 			});
 
 		});
-		</script>
-		
-		<script>
-      Chart.defaults.global.responsive = false;
-      // define the chart data
-      var chartTempData = {
-        labels : [{% for item in labels_temp %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: '{{ legend_temp }}',
-            fill: true,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data : [{% for item in values_temp %}
-                      {{item}},
-                    {% endfor %}],
-            spanGaps: false
-        }]
-			}
-			
-			var chartHumData = {
-        labels : [{% for item in labels_hum %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: '{{ legend_hum }}',
-            fill: true,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data : [{% for item in values_hum %}
-                      {{item}},
-                    {% endfor %}],
-            spanGaps: false
-        }]
-      }
+  </script>
 
-      // get chart canvas
-			var ctxTemp = document.getElementById("myTempChart").getContext("2d");
-			var ctxHum = document.getElementById("myHumChart").getContext("2d");			
-			
 
-      // create the chart using the chart canvas
-      var myTempChart = new Chart(ctxTemp, {
+  <div class="container">
+  </div>
+  <script>
+    window.onload = function () {
+      var container = document.querySelector('.container');
+
+      // humidity temperature
+      var div = document.createElement('div');
+      div.classList.add('chart-container');
+
+      var canvas = document.createElement('canvas');
+      div.appendChild(canvas);
+      container.appendChild(div);
+
+      var ctx = canvas.getContext('2d');
+      var config = {
         type: 'line',
-        data: chartTempData,
-			});
-			var myHumChart = new Chart(ctxHum, {
-        type: 'line',
-        data: chartHumData,
-      });
-    </script>
-		
+        data: {
+          labels: [{% for item in labels_hum %}
+                      "{{item}}",
+                    {% endfor %}],
+      datasets: [{
+        label: 'Temperature',
+        fill: false,
+        lineTension: 0.1,
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: "rgb(255, 99, 132)",
+        pointBackgroundColor: "rgb(255, 99, 132)",
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "rgb(255, 99, 132)",
+        pointHoverBorderColor: "rgb(255, 99, 132)",
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgb(255, 99, 132)',
+        data: [{% for item in values_temp %}
+                        {{ item }},
+      {% endfor %}],
+    fill: false,
+            }]
+          }
+        }
+    new Chart(ctx, config);
+
+    // humidity graph
+    var div = document.createElement('div');
+    div.classList.add('chart-container');
+
+    var canvas = document.createElement('canvas');
+    div.appendChild(canvas);
+    container.appendChild(div);
+
+    var ctx = canvas.getContext('2d');
+    var config = {
+      type: 'line',
+      data: {
+        labels: [{% for item in labels_hum %}
+                      "{{item}}",
+                    {% endfor %}],
+    datasets: [{
+      label: 'Humidity',
+      fill: false,
+      lineTension: 0.1,
+      backgroundColor: "rgba(75,192,192,0.4)",
+      borderColor: "rgba(75,192,192,1)",
+      borderCapStyle: 'butt',
+      borderDash: [],
+      borderDashOffset: 0.0,
+      borderJoinStyle: 'miter',
+      pointBorderColor: "rgba(75,192,192,1)",
+      pointBackgroundColor: "#fff",
+      pointBorderWidth: 1,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: "rgba(75,192,192,1)",
+      pointHoverBorderColor: "rgba(220,220,220,1)",
+      pointHoverBorderWidth: 2,
+      pointRadius: 1,
+      pointHitRadius: 10,
+      data: [{% for item in values_hum %}
+                        {{ item }},
+    {% endfor %}],
+      fill: false,
+            }]
+          }
+        }
+    new Chart(ctx, config);
+      // );
+    };
+  </script>
+  <p> @2020 Developed by MamaSaurio.org</p>
+
 </body>
 
 </html>
-
-
-
-
-
-
